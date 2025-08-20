@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 public class CategoryController {
     @Autowired
     private CategoryService categoryService;
@@ -23,7 +24,8 @@ public class CategoryController {
 
 
 
-    @GetMapping("api/public/category")
+   // @GetMapping("/public/category")
+    @RequestMapping(value= "/public/category",method =RequestMethod.GET)
     public ResponseEntity<List<Category>> getCategoryList()
     {
         List<Category> status=categoryService.getAllCategory();
@@ -50,7 +52,20 @@ public class CategoryController {
        }
 
     }
-    @PutMapping("api/public/category")
-    public ResponseEntity<String>updateCategory(@ResponseBody Category category)
+    @PutMapping("api/public/category/{categoryId}")
+    public ResponseEntity<String>updateCategory(@RequestBody Category category,@PathVariable Long categoryId)
+    {
+        try
+    {
+        Category newCategory=categoryService.updateCategory(category,categoryId);
+        return new ResponseEntity<>("new category with category id"+ categoryId, HttpStatus.OK);
+    }
+
+        catch(ResponseStatusException e)
+        {
+            return new ResponseEntity<>(e.getMessage(),e.getStatusCode());
+        }
+    }
+
 
 }
